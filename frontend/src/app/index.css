@@ -81,8 +81,9 @@ body {
   font-family: var(--font-sans);
   background: var(--bg-base);
   color: var(--text-primary);
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
   line-height: 1.5;
   transition: background var(--transition-normal);
 }
@@ -197,4 +198,92 @@ body {
 
 .animate-slide-in {
   animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ==========================================================================
+   PORTAL DESIGN SYSTEM (UTH / EDU PORTAL)
+   ========================================================================== */
+:root {
+  --portal-teal: #008689;
+  --portal-teal-dark: #006b6d;
+  --portal-teal-light: #e6f4f4;
+  --portal-teal-hover: #009da1;
+  --portal-orange: #ff6600;
+  --portal-orange-light: #fff2e8;
+  --portal-blue: #1677ff;
+  --portal-card-bg: #ffffff;
+  --portal-card-border: #e2e8f0;
+  --portal-text-heading: #0f172a;
+  --portal-text-body: #334155;
+  --portal-text-muted: #64748b;
+  --portal-bg: #f8fafc;
+}
+
+[data-theme="dark"] {
+  --portal-card-bg: #1e293b;
+  --portal-card-border: rgba(255, 255, 255, 0.08);
+  --portal-text-heading: #f8fafc;
+  --portal-text-body: #cbd5e1;
+  --portal-text-muted: #94a3b8;
+  --portal-bg: #090d16;
+  --portal-teal-light: rgba(0, 134, 137, 0.15);
+  --portal-orange-light: rgba(255, 102, 0, 0.15);
+}
+
+.portal-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.portal-card {
+  background: var(--portal-card-bg);
+  border: 1px solid var(--portal-card-border);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.portal-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Badge styling */
+.badge-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.badge-error {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.badge-primary {
+  background: var(--portal-teal);
+  color: #ffffff;
+}
+
+/* Marquee / ticker animation */
+@keyframes ticker {
+  0% { transform: translateY(0); }
+  45% { transform: translateY(0); }
+  50% { transform: translateY(-50%); }
+  95% { transform: translateY(-50%); }
+  100% { transform: translateY(0); }
+}
+
+.animate-ticker {
+  animation: ticker 6s ease-in-out infinite;
 }
