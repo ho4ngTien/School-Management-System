@@ -2,7 +2,9 @@ package com.edu.people.infrastructure.web;
 
 import com.edu.people.api.dto.CreateStudentRequest;
 import com.edu.people.api.dto.StudentView;
+import com.edu.people.api.dto.UpdateStudentRequest;
 import com.edu.people.application.command.CreateStudentCommand;
+import com.edu.people.application.command.UpdateStudentCommand;
 import com.edu.people.application.service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,6 +61,21 @@ public class StudentController {
         return ResponseEntity.ok(studentService.getStudent(organizationId, studentId));
     }
 
+    @PutMapping("/{studentId}")
+    public ResponseEntity<StudentView> update(
+            @PathVariable UUID organizationId,
+            @PathVariable UUID studentId,
+            @Valid @RequestBody UpdateStudentRequest request
+    ) {
+        UpdateStudentCommand command = new UpdateStudentCommand(
+                request.fullName(),
+                request.dateOfBirth(),
+                request.enrolledAt(),
+                request.status()
+        );
+        return ResponseEntity.ok(studentService.updateStudent(organizationId, studentId, command));
+    }
+
     @DeleteMapping("/{studentId}")
     public ResponseEntity<StudentView> deactivate(
             @PathVariable UUID organizationId,
@@ -66,4 +84,3 @@ public class StudentController {
         return ResponseEntity.ok(studentService.deactivateStudent(organizationId, studentId));
     }
 }
-

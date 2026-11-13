@@ -16,8 +16,8 @@
 - [x] Global exception handling & API error response ([phase3.1](phase-3/phase3.1.md))
 - [x] Request validation và error response chuẩn hóa ([phase3.2](phase-3/phase3.2.md))
 - [x] Flyway migrations đa schema (`identity`, `organization`) ([phase3.3](phase-3/phase3.3.md))
-- [ ] Logging tập trung và correlation ID (`TraceIdFilter`) ([phase3.4](phase-3/phase3.4.md))
-- [ ] Actuator, metrics và health indicators mở rộng ([phase3.5](phase-3/phase3.5.md))
+- [x] Logging tập trung và correlation ID (`TraceIdFilter`) ([phase3.4](phase-3/phase3.4.md))
+- [x] Actuator, metrics và health indicators mở rộng ([phase3.5](phase-3/phase3.5.md))
 
 ## Phase 4 — Identity, Access & Multi-Tenancy
 - [x] Users, tài khoản và mã hóa mật khẩu BCrypt ([phase4.1](phase-4/phase4.1.md))
@@ -29,7 +29,7 @@
 - [ ] Dynamic RBAC Permission Catalog & Resource-Level Authorization ([phase4.7](phase-4/phase4.7.md))
 
 ## Phase 5 — Education Core
-- [ ] Students và teachers (`people` module) ([phase5.1](phase-5/phase5.1.md))
+- [x] Students và teachers (`people` module) ([phase5.1](phase-5/phase5.1.md))
 - [ ] Academic periods và classes (`academic` module) ([phase5.2](phase-5/phase5.2.md))
 - [ ] Courses và curricula (`curriculum` module) ([phase5.3](phase-5/phase5.3.md))
 - [ ] Enrollments và learning groups (`enrollment` module) ([phase5.4](phase-5/phase5.4.md))
