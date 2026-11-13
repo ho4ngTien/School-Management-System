@@ -2,14 +2,18 @@ package com.edu.people.infrastructure.web;
 
 import com.edu.people.api.dto.CreateTeacherRequest;
 import com.edu.people.api.dto.TeacherView;
+import com.edu.people.api.dto.UpdateTeacherRequest;
 import com.edu.people.application.command.CreateTeacherCommand;
+import com.edu.people.application.command.UpdateTeacherCommand;
 import com.edu.people.application.service.TeacherService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,5 +59,26 @@ public class TeacherController {
     ) {
         return ResponseEntity.ok(teacherService.getTeacher(organizationId, teacherId));
     }
-}
 
+    @PutMapping("/{teacherId}")
+    public ResponseEntity<TeacherView> update(
+            @PathVariable UUID organizationId,
+            @PathVariable UUID teacherId,
+            @Valid @RequestBody UpdateTeacherRequest request
+    ) {
+        UpdateTeacherCommand command = new UpdateTeacherCommand(
+                request.fullName(),
+                request.specialization(),
+                request.status()
+        );
+        return ResponseEntity.ok(teacherService.updateTeacher(organizationId, teacherId, command));
+    }
+
+    @DeleteMapping("/{teacherId}")
+    public ResponseEntity<TeacherView> deactivate(
+            @PathVariable UUID organizationId,
+            @PathVariable UUID teacherId
+    ) {
+        return ResponseEntity.ok(teacherService.deactivateTeacher(organizationId, teacherId));
+    }
+}
