@@ -30,7 +30,7 @@
 
 ## Phase 5 — Education Core
 - [x] Students và teachers (`people` module) ([phase5.1](phase-5/phase5.1.md))
-- [ ] Academic periods và classes (`academic` module) ([phase5.2](phase-5/phase5.2.md))
+- [x] Academic periods và classes (`academic` module) ([phase5.2](phase-5/phase5.2.md))
 - [ ] Courses và curricula (`curriculum` module) ([phase5.3](phase-5/phase5.3.md))
 - [ ] Enrollments và learning groups (`enrollment` module) ([phase5.4](phase-5/phase5.4.md))
 
