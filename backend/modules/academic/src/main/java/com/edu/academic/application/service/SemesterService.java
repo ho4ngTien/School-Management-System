@@ -6,6 +6,8 @@ import com.edu.academic.domain.exception.InvalidAcademicPeriodException;
 import com.edu.academic.infrastructure.persistence.entity.SemesterEntity;
 import com.edu.academic.infrastructure.persistence.repository.AcademicYearJpaRepository;
 import com.edu.academic.infrastructure.persistence.repository.SemesterJpaRepository;
+import com.edu.shared.kernel.exception.BusinessException;
+import com.edu.shared.kernel.exception.ErrorCode;
 import com.edu.shared.kernel.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +28,21 @@ public class SemesterService {
     }
 
     public SemesterView createSemester(CreateSemesterCommand command) {
-        // Verify academic year belongs to this organization
-        academicYearRepository.findByIdAndOrganizationId(command.academicYearId(), command.organizationId())
-                .orElseThrow(() -> new ResourceNotFoundException("AcademicYear", command.academicYearId().toString()));
+        academicYearRepository.findById(command.academicYearId())
+                .ifPresentOrElse(
+                        academicYear -> {
+                            if (!academicYear.getOrganizationId().equals(command.organizationId())) {
+                                throw new BusinessException(
+                                        ErrorCode.ACCESS_DENIED,
+                                        "Academic year does not belong to this organization",
+                                        403
+                                );
+                            }
+                        },
+                        () -> {
+                            throw new ResourceNotFoundException("AcademicYear", command.academicYearId().toString());
+                        }
+                );
 
         if (!command.endDate().isAfter(command.startDate())) {
             throw new InvalidAcademicPeriodException("End date must be after start date");
