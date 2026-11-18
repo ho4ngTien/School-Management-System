@@ -78,6 +78,10 @@ public class ClassRoomEntity extends AuditableEntity {
         return academicYearId;
     }
 
+    public void setAcademicYearId(UUID academicYearId) {
+        this.academicYearId = academicYearId;
+    }
+
     public Integer getCapacity() {
         return capacity;
     }
