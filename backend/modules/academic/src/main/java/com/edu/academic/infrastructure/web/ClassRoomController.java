@@ -2,7 +2,9 @@ package com.edu.academic.infrastructure.web;
 
 import com.edu.academic.api.dto.ClassRoomView;
 import com.edu.academic.api.dto.CreateClassRoomRequest;
+import com.edu.academic.api.dto.UpdateClassRoomRequest;
 import com.edu.academic.application.command.CreateClassRoomCommand;
+import com.edu.academic.application.command.UpdateClassRoomCommand;
 import com.edu.academic.application.service.ClassRoomService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,6 +57,21 @@ public class ClassRoomController {
             @PathVariable UUID classId
     ) {
         return ResponseEntity.ok(classRoomService.getById(organizationId, classId));
+    }
+
+    @PutMapping("/{classId}")
+    public ResponseEntity<ClassRoomView> update(
+            @PathVariable UUID organizationId,
+            @PathVariable UUID classId,
+            @Valid @RequestBody UpdateClassRoomRequest request
+    ) {
+        UpdateClassRoomCommand command = new UpdateClassRoomCommand(
+                request.code(),
+                request.name(),
+                request.academicYearId(),
+                request.capacity()
+        );
+        return ResponseEntity.ok(classRoomService.updateClassRoom(organizationId, classId, command));
     }
 }
 
