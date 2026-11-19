@@ -3,11 +3,13 @@ package com.edu.academic.application.service;
 import com.edu.academic.api.dto.ClassRoomView;
 import com.edu.academic.application.command.CreateClassRoomCommand;
 import com.edu.academic.domain.exception.DuplicateClassCodeException;
+import com.edu.academic.domain.exception.InvalidAcademicPeriodException;
 import com.edu.academic.infrastructure.persistence.entity.AcademicYearEntity;
 import com.edu.academic.infrastructure.persistence.entity.ClassRoomEntity;
 import com.edu.academic.infrastructure.persistence.repository.AcademicYearJpaRepository;
 import com.edu.academic.infrastructure.persistence.repository.ClassRoomJpaRepository;
 import com.edu.shared.kernel.exception.ResourceNotFoundException;
+import com.edu.shared.kernel.exception.BusinessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +46,7 @@ class ClassRoomServiceTest {
     void createClassRoom_whenAcademicYearNotFound_throwsResourceNotFoundException() {
         UUID orgId = UUID.randomUUID();
         UUID yearId = UUID.randomUUID();
-        when(academicYearRepository.findByIdAndOrganizationId(yearId, orgId)).thenReturn(Optional.empty());
+        when(academicYearRepository.findById(yearId)).thenReturn(Optional.empty());
 
         CreateClassRoomCommand command = new CreateClassRoomCommand(
                 "12A1", "Lop 12A1", orgId, yearId, 35
@@ -58,7 +60,7 @@ class ClassRoomServiceTest {
     void createClassRoom_whenCodeAlreadyExists_throwsDuplicateClassCodeException() {
         UUID orgId = UUID.randomUUID();
         UUID yearId = UUID.randomUUID();
-        when(academicYearRepository.findByIdAndOrganizationId(yearId, orgId))
+        when(academicYearRepository.findById(yearId))
                 .thenReturn(Optional.of(new AcademicYearEntity(yearId, "2024-2025", LocalDate.now(), LocalDate.now().plusMonths(9), orgId, null)));
         when(classRoomRepository.existsByCodeAndOrganizationId("12A1", orgId)).thenReturn(true);
 
@@ -74,7 +76,7 @@ class ClassRoomServiceTest {
     void createClassRoom_success_savesAndReturnsView() {
         UUID orgId = UUID.randomUUID();
         UUID yearId = UUID.randomUUID();
-        when(academicYearRepository.findByIdAndOrganizationId(yearId, orgId))
+        when(academicYearRepository.findById(yearId))
                 .thenReturn(Optional.of(new AcademicYearEntity(yearId, "2024-2025", LocalDate.now(), LocalDate.now().plusMonths(9), orgId, null)));
         when(classRoomRepository.existsByCodeAndOrganizationId("12A1", orgId)).thenReturn(false);
         when(classRoomRepository.save(any(ClassRoomEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -89,6 +91,40 @@ class ClassRoomServiceTest {
         assertThat(result.code()).isEqualTo("12A1");
         assertThat(result.capacity()).isEqualTo(35);
         verify(classRoomRepository).save(any(ClassRoomEntity.class));
+    }
+
+    @Test
+    void createClassRoom_whenCapacityIsNegative_throwsInvalidAcademicPeriodException() {
+        UUID orgId = UUID.randomUUID();
+        UUID yearId = UUID.randomUUID();
+        when(academicYearRepository.findById(yearId))
+                .thenReturn(Optional.of(new AcademicYearEntity(yearId, "2024-2025",
+                        LocalDate.now(), LocalDate.now().plusMonths(9), orgId, null)));
+
+        CreateClassRoomCommand command = new CreateClassRoomCommand(
+                "12A1", "Lop 12A1", orgId, yearId, -1
+        );
+
+        assertThatThrownBy(() -> service.createClassRoom(command))
+                .isInstanceOf(InvalidAcademicPeriodException.class);
+    }
+
+    @Test
+    void createClassRoom_whenAcademicYearBelongsToAnotherOrganization_throwsForbidden() {
+        UUID orgId = UUID.randomUUID();
+        UUID otherOrgId = UUID.randomUUID();
+        UUID yearId = UUID.randomUUID();
+        when(academicYearRepository.findById(yearId))
+                .thenReturn(Optional.of(new AcademicYearEntity(yearId, "2024-2025",
+                        LocalDate.now(), LocalDate.now().plusMonths(9), otherOrgId, null)));
+
+        CreateClassRoomCommand command = new CreateClassRoomCommand(
+                "12A1", "Lop 12A1", orgId, yearId, 35
+        );
+
+        assertThatThrownBy(() -> service.createClassRoom(command))
+                .isInstanceOf(BusinessException.class)
+                .matches(error -> ((BusinessException) error).getHttpStatus() == 403);
     }
 }
 

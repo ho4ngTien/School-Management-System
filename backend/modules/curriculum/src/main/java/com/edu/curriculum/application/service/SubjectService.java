@@ -1,6 +1,7 @@
 package com.edu.curriculum.application.service;
 
 import com.edu.curriculum.api.dto.SubjectView;
+import com.edu.curriculum.api.dto.UpdateSubjectRequest;
 import com.edu.curriculum.application.command.CreateSubjectCommand;
 import com.edu.curriculum.domain.exception.DuplicateSubjectCodeException;
 import com.edu.curriculum.domain.model.SubjectStatus;
@@ -9,6 +10,7 @@ import com.edu.curriculum.infrastructure.persistence.repository.SubjectJpaReposi
 import com.edu.shared.kernel.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +25,7 @@ public class SubjectService {
         this.repository = repository;
     }
 
+    @PreAuthorize("hasAuthority('CURRICULUM_SUBJECT_WRITE')")
     public SubjectView createSubject(CreateSubjectCommand command) {
         String trimmedCode = command.code().trim();
         if (repository.existsByCodeAndOrganizationId(trimmedCode, command.organizationId())) {
@@ -43,6 +46,7 @@ public class SubjectService {
         return toView(saved);
     }
 
+    @PreAuthorize("hasAuthority('CURRICULUM_SUBJECT_READ')")
     @Transactional(readOnly = true)
     public List<SubjectView> listByOrganization(UUID organizationId) {
         return repository.findAllByOrganizationId(organizationId)
@@ -51,6 +55,7 @@ public class SubjectService {
                 .toList();
     }
 
+    @PreAuthorize("hasAuthority('CURRICULUM_SUBJECT_READ')")
     @Transactional(readOnly = true)
     public SubjectView getById(UUID organizationId, UUID subjectId) {
         return repository.findByIdAndOrganizationId(subjectId, organizationId)
@@ -58,6 +63,25 @@ public class SubjectService {
                 .orElseThrow(() -> new ResourceNotFoundException("Subject", subjectId.toString()));
     }
 
+    @PreAuthorize("hasAuthority('CURRICULUM_SUBJECT_WRITE')")
+    public SubjectView updateSubject(UUID organizationId, UUID subjectId, UpdateSubjectRequest request) {
+        SubjectEntity entity = repository.findByIdAndOrganizationId(subjectId, organizationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Subject", subjectId.toString()));
+
+        String trimmedCode = request.code().trim();
+        if (!entity.getCode().equals(trimmedCode)
+                && repository.existsByCodeAndOrganizationIdAndIdNot(trimmedCode, organizationId, subjectId)) {
+            throw new DuplicateSubjectCodeException(trimmedCode);
+        }
+
+        entity.setCode(trimmedCode);
+        entity.setName(request.name().trim());
+        entity.setDescription(request.description() != null ? request.description().trim() : null);
+        entity.setCredits(request.credits());
+        return toView(repository.save(entity));
+    }
+
+    @PreAuthorize("hasAuthority('CURRICULUM_SUBJECT_WRITE')")
     public SubjectView deprecateSubject(UUID organizationId, UUID subjectId) {
         SubjectEntity entity = repository.findByIdAndOrganizationId(subjectId, organizationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Subject", subjectId.toString()));

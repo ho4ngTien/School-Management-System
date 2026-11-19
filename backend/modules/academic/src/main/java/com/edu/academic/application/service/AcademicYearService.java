@@ -2,6 +2,7 @@ package com.edu.academic.application.service;
 
 import com.edu.academic.api.dto.AcademicYearView;
 import com.edu.academic.application.command.CreateAcademicYearCommand;
+import com.edu.academic.application.command.UpdateAcademicYearCommand;
 import com.edu.academic.domain.exception.InvalidAcademicPeriodException;
 import com.edu.academic.domain.model.AcademicStatus;
 import com.edu.academic.infrastructure.persistence.entity.AcademicYearEntity;
@@ -56,6 +57,30 @@ public class AcademicYearService {
         return repository.findByIdAndOrganizationId(id, organizationId)
                 .map(this::toView)
                 .orElseThrow(() -> new ResourceNotFoundException("AcademicYear", id.toString()));
+    }
+
+    public AcademicYearView updateAcademicYear(UUID organizationId, UUID id, UpdateAcademicYearCommand command) {
+        if (!command.endDate().isAfter(command.startDate())) {
+            throw new InvalidAcademicPeriodException("End date must be after start date");
+        }
+
+        AcademicYearEntity entity = repository.findByIdAndOrganizationId(id, organizationId)
+                .orElseThrow(() -> new ResourceNotFoundException("AcademicYear", id.toString()));
+
+        entity.setName(command.name().trim());
+        entity.setStartDate(command.startDate());
+        entity.setEndDate(command.endDate());
+        if (command.status() != null) {
+            entity.setStatus(command.status());
+        }
+
+        return toView(repository.save(entity));
+    }
+
+    public void deleteAcademicYear(UUID organizationId, UUID id) {
+        AcademicYearEntity entity = repository.findByIdAndOrganizationId(id, organizationId)
+                .orElseThrow(() -> new ResourceNotFoundException("AcademicYear", id.toString()));
+        repository.delete(entity);
     }
 
     private AcademicYearView toView(AcademicYearEntity entity) {

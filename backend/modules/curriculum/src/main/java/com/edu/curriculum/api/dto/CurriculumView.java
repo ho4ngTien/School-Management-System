@@ -1,6 +1,7 @@
 package com.edu.curriculum.api.dto;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public record CurriculumView(
@@ -11,7 +12,8 @@ public record CurriculumView(
         Integer totalCredits,
         UUID organizationId,
         Instant createdAt,
-        Instant updatedAt
+        Instant updatedAt,
+        List<CurriculumSubjectView> subjects
 ) {
 }
 

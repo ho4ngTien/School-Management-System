@@ -284,13 +284,13 @@ CREATE INDEX idx_class_rooms_academic_year ON academic.class_rooms(academic_year
 
 | ID | Tiêu chí | Loại | Trạng thái |
 |----|----------|------|------------|
-| AC-5.2.1 | `start_date >= end_date` khi tạo năm học → `400 Bad Request` | Validation | 📋 Kế hoạch |
-| AC-5.2.2 | Tạo học kỳ với `academicYearId` không thuộc org → `403 Forbidden` | Security | 📋 Kế hoạch |
-| AC-5.2.3 | `code` lớp học trùng trong cùng org → `409 Conflict` | Functional | 📋 Kế hoạch |
-| AC-5.2.4 | Xóa `AcademicYear` → cascade xóa các `Semester` liên quan | Functional | 📋 Kế hoạch |
-| AC-5.2.5 | `capacity` không hợp lệ (≤ 0) → `400 Bad Request` | Validation | 📋 Kế hoạch |
-| AC-5.2.6 | Flyway V13–V16 chạy thành công, schema `academic` được tạo đúng | Infrastructure | 📋 Kế hoạch |
-| AC-5.2.7 | `GET /classes` chỉ trả về lớp thuộc `orgId` hiện tại | Security | 📋 Kế hoạch |
+| AC-5.2.1 | `start_date >= end_date` khi tạo năm học → `400 Bad Request` | Validation | ✅ Hoàn thành |
+| AC-5.2.2 | Tạo học kỳ với `academicYearId` không thuộc org → `403 Forbidden` | Security | ✅ Hoàn thành |
+| AC-5.2.3 | `code` lớp học trùng trong cùng org → `409 Conflict` | Functional | ✅ Hoàn thành |
+| AC-5.2.4 | Xóa `AcademicYear` → cascade xóa các `Semester` liên quan | Functional | ✅ Hoàn thành |
+| AC-5.2.5 | `capacity` không hợp lệ (≤ 0) → `400 Bad Request` | Validation | ✅ Hoàn thành |
+| AC-5.2.6 | Flyway V13–V16 chạy thành công, schema `academic` được tạo đúng | Infrastructure | ✅ Hoàn thành |
+| AC-5.2.7 | `GET /classes` chỉ trả về lớp thuộc `orgId` hiện tại | Security | ✅ Hoàn thành |
 
 ---
 

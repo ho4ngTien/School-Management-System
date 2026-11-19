@@ -4,16 +4,20 @@ import com.edu.academic.api.dto.AcademicYearView;
 import com.edu.academic.api.dto.CreateAcademicYearRequest;
 import com.edu.academic.api.dto.CreateSemesterRequest;
 import com.edu.academic.api.dto.SemesterView;
+import com.edu.academic.api.dto.UpdateAcademicYearRequest;
 import com.edu.academic.application.command.CreateAcademicYearCommand;
 import com.edu.academic.application.command.CreateSemesterCommand;
+import com.edu.academic.application.command.UpdateAcademicYearCommand;
 import com.edu.academic.application.service.AcademicYearService;
 import com.edu.academic.application.service.SemesterService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,6 +64,30 @@ public class AcademicYearController {
             @PathVariable UUID yearId
     ) {
         return ResponseEntity.ok(academicYearService.getById(organizationId, yearId));
+    }
+
+    @PutMapping("/{yearId}")
+    public ResponseEntity<AcademicYearView> update(
+            @PathVariable UUID organizationId,
+            @PathVariable UUID yearId,
+            @Valid @RequestBody UpdateAcademicYearRequest request
+    ) {
+        UpdateAcademicYearCommand command = new UpdateAcademicYearCommand(
+                request.name(),
+                request.startDate(),
+                request.endDate(),
+                request.status()
+        );
+        return ResponseEntity.ok(academicYearService.updateAcademicYear(organizationId, yearId, command));
+    }
+
+    @DeleteMapping("/{yearId}")
+    public ResponseEntity<Void> delete(
+            @PathVariable UUID organizationId,
+            @PathVariable UUID yearId
+    ) {
+        academicYearService.deleteAcademicYear(organizationId, yearId);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{yearId}/semesters")

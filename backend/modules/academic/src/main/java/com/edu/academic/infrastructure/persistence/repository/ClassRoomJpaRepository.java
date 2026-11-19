@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public interface ClassRoomJpaRepository extends JpaRepository<ClassRoomEntity, UUID> {
     boolean existsByCodeAndOrganizationId(String code, UUID organizationId);
+    boolean existsByCodeAndOrganizationIdAndIdNot(String code, UUID organizationId, UUID id);
     List<ClassRoomEntity> findAllByOrganizationId(UUID organizationId);
     Optional<ClassRoomEntity> findByIdAndOrganizationId(UUID id, UUID organizationId);
 }
