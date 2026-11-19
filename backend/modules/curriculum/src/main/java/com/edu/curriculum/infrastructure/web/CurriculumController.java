@@ -2,6 +2,7 @@ package com.edu.curriculum.infrastructure.web;
 
 import com.edu.curriculum.api.dto.AssignSubjectRequest;
 import com.edu.curriculum.api.dto.CreateCurriculumRequest;
+import com.edu.curriculum.api.dto.UpdateCurriculumRequest;
 import com.edu.curriculum.api.dto.CurriculumSubjectView;
 import com.edu.curriculum.api.dto.CurriculumView;
 import com.edu.curriculum.application.command.AssignSubjectCommand;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -92,6 +94,24 @@ public class CurriculumController {
             @PathVariable UUID subjectId
     ) {
         curriculumService.removeSubject(organizationId, curriculumId, subjectId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{curriculumId}")
+    public ResponseEntity<CurriculumView> update(
+            @PathVariable UUID organizationId,
+            @PathVariable UUID curriculumId,
+            @Valid @RequestBody UpdateCurriculumRequest request
+    ) {
+        return ResponseEntity.ok(curriculumService.updateCurriculum(organizationId, curriculumId, request));
+    }
+
+    @DeleteMapping("/{curriculumId}")
+    public ResponseEntity<Void> delete(
+            @PathVariable UUID organizationId,
+            @PathVariable UUID curriculumId
+    ) {
+        curriculumService.deleteCurriculum(organizationId, curriculumId);
         return ResponseEntity.noContent().build();
     }
 }

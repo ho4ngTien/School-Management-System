@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public interface CurriculumJpaRepository extends JpaRepository<CurriculumEntity, UUID> {
     boolean existsByCodeAndOrganizationId(String code, UUID organizationId);
+    boolean existsByCodeAndOrganizationIdAndIdNot(String code, UUID organizationId, UUID id);
     List<CurriculumEntity> findAllByOrganizationId(UUID organizationId);
     Optional<CurriculumEntity> findByIdAndOrganizationId(UUID id, UUID organizationId);
 }

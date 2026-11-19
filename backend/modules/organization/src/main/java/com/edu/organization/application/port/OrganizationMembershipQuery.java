@@ -7,6 +7,10 @@ public interface OrganizationMembershipQuery {
 
     Optional<MembershipDetails> findActiveMembership(UUID userId, UUID organizationId);
 
+    default java.util.Set<String> findPermissionCodesByMembershipId(UUID membershipId) {
+        return java.util.Set.of();
+    }
+
     record MembershipDetails(
             UUID membershipId,
             UUID userId,

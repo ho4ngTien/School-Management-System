@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public interface SubjectJpaRepository extends JpaRepository<SubjectEntity, UUID> {
     boolean existsByCodeAndOrganizationId(String code, UUID organizationId);
+    boolean existsByCodeAndOrganizationIdAndIdNot(String code, UUID organizationId, UUID id);
     List<SubjectEntity> findAllByOrganizationId(UUID organizationId);
     Optional<SubjectEntity> findByIdAndOrganizationId(UUID id, UUID organizationId);
 }

@@ -26,12 +26,12 @@
 - [x] Spring Security 6 stateless filter chain & JWT Access/Refresh tokens ([phase4.4](phase-4/phase4.4.md))
 - [x] Authentication endpoints (`POST /api/v1/auth/login`, `POST /api/v1/auth/refresh`) ([phase4.5](phase-4/phase4.5.md))
 - [x] Tenant resolution context (`X-Organization-Id` header) & RBAC evaluation ([phase4.6](phase-4/phase4.6.md))
-- [ ] Dynamic RBAC Permission Catalog & Resource-Level Authorization ([phase4.7](phase-4/phase4.7.md))
+- [x] Dynamic RBAC Permission Catalog & Resource-Level Authorization ([phase4.7](phase-4/phase4.7.md))
 
 ## Phase 5 — Education Core
 - [x] Students và teachers (`people` module) ([phase5.1](phase-5/phase5.1.md))
 - [x] Academic periods và classes (`academic` module) ([phase5.2](phase-5/phase5.2.md))
-- [ ] Courses và curricula (`curriculum` module) ([phase5.3](phase-5/phase5.3.md))
+- [x] Courses và curricula (`curriculum` module) ([phase5.3](phase-5/phase5.3.md))
 - [ ] Enrollments và learning groups (`enrollment` module) ([phase5.4](phase-5/phase5.4.md))
 
 ## Phase 6 — Academic Operations

@@ -10,11 +10,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class TenantResolutionFilter extends OncePerRequestFilter {
@@ -45,10 +49,22 @@ public class TenantResolutionFilter extends OncePerRequestFilter {
                     throw new AccessDeniedException("User is not an active member of organization: " + orgId);
                 }
 
+                var membership = membershipOpt.get();
                 TenantContext.set(
                         new UserId(userId),
                         new OrganizationId(orgId),
-                        membershipOpt.get().role()
+                        membership.role()
+                );
+
+                Set<String> permissionCodes = new HashSet<>(
+                        organizationMembershipQuery.findPermissionCodesByMembershipId(membership.membershipId())
+                );
+                permissionCodes.addAll(defaultPermissionCodes(membership.role()));
+                var authorities = permissionCodes.stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .toList();
+                SecurityContextHolder.getContext().setAuthentication(
+                        new JwtAuthenticationToken(jwt, authorities)
                 );
             }
 
@@ -62,5 +78,45 @@ public class TenantResolutionFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
         return path.startsWith("/api/v1/auth/") || path.startsWith("/actuator/");
+    }
+
+    private Set<String> defaultPermissionCodes(String role) {
+        return switch (role.toUpperCase()) {
+            case "OWNER" -> Set.of(
+                    "ORGANIZATION_MEMBER_INVITE",
+                    "ORGANIZATION_MEMBER_REVOKE",
+                    "ORGANIZATION_SETTINGS_WRITE",
+                    "PEOPLE_STUDENT_WRITE",
+                    "PEOPLE_TEACHER_WRITE",
+                    "CURRICULUM_SUBJECT_WRITE",
+                    "CURRICULUM_SUBJECT_READ",
+                    "CURRICULUM_CURRICULUM_WRITE",
+                    "CURRICULUM_CURRICULUM_READ",
+                    "ACADEMIC_CLASS_WRITE",
+                    "ATTENDANCE_RECORD_WRITE",
+                    "ASSESSMENT_GRADE_WRITE",
+                    "ASSESSMENT_GRADE_READ",
+                    "CERTIFICATION_EVALUATE"
+            );
+            case "ADMIN" -> Set.of(
+                    "ORGANIZATION_MEMBER_INVITE",
+                    "ORGANIZATION_MEMBER_REVOKE",
+                    "PEOPLE_STUDENT_WRITE",
+                    "PEOPLE_TEACHER_WRITE",
+                    "CURRICULUM_SUBJECT_WRITE",
+                    "CURRICULUM_SUBJECT_READ",
+                    "CURRICULUM_CURRICULUM_WRITE",
+                    "CURRICULUM_CURRICULUM_READ",
+                    "ACADEMIC_CLASS_WRITE",
+                    "ATTENDANCE_RECORD_WRITE",
+                    "ASSESSMENT_GRADE_WRITE",
+                    "ASSESSMENT_GRADE_READ"
+            );
+            default -> Set.of(
+                    "CURRICULUM_SUBJECT_READ",
+                    "CURRICULUM_CURRICULUM_READ",
+                    "ASSESSMENT_GRADE_READ"
+            );
+        };
     }
 }
