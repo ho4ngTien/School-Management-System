@@ -32,7 +32,7 @@
 - [x] Students và teachers (`people` module) ([phase5.1](phase-5/phase5.1.md))
 - [x] Academic periods và classes (`academic` module) ([phase5.2](phase-5/phase5.2.md))
 - [x] Courses và curricula (`curriculum` module) ([phase5.3](phase-5/phase5.3.md))
-- [ ] Enrollments và learning groups (`enrollment` module) ([phase5.4](phase-5/phase5.4.md))
+- [x] Enrollments và learning groups (`enrollment` module) ([phase5.4](phase-5/phase5.4.md))
 
 ## Phase 6 — Academic Operations
 - [ ] Teaching schedules và assignment (`teaching` module) ([phase6.1](phase-6/phase6.1.md))
